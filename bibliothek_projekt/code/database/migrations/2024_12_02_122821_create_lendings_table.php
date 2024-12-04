@@ -3,6 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\Book;
+use App\Models\Librarian;
 
 return new class extends Migration
 {
@@ -13,6 +15,13 @@ return new class extends Migration
     {
         Schema::create('lendings', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(Book::class); // Fremdschlüssel für den Bibliothekar
+
+            $table->string('borrower_name');
+            $table->string('librarian');
+            $table->string('lastname');
+            $table->string('firstname');
+
             $table->timestamps();
         });
     }
