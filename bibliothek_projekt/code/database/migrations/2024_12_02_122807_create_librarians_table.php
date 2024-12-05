@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('librarians', function (Blueprint $table) {
             $table->id();
+
+            $table->string('username');     
+            $table->string('e-mail');     
+            $table->string('firstname');     
+            $table->string('lastname');     
+            $table->string('password');
+
             $table->timestamps();
         });
     }
