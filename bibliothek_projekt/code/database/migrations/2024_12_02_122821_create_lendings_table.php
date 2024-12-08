@@ -15,12 +15,13 @@ return new class extends Migration
     {
         Schema::create('lendings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId(Book::class); // Fremdschlüssel für den Bibliothekar
+            $table->foreignIdFor(Book::class); // Fremdschlüssel für das Buch, das ausgeliehen wird
+            $table->foreignIdFor(Librarian::class); // Fremdschlüssel für den Bibliothekar, der das Buch ausleiht
 
-            $table->string('borrower_name');
-            $table->string('librarian');
-            $table->string('lastname');
-            $table->string('firstname');
+            $table->string('borrower_name'); // Name der Person, die das Buch ausleiht
+            $table->date('borrow_date'); // Datum, an dem das Buch ausgeliehen wird
+            $table->date('due_date'); // Datum, bis zu welchem das Buch zurückgegeben werden muss
+            $table->boolean('returned')->default(false); // Wahrheitswert, um festzuhalten, ob das Buch schon zurückgegeben wurde
 
             $table->timestamps();
         });
@@ -34,3 +35,4 @@ return new class extends Migration
         Schema::dropIfExists('lendings');
     }
 };
+

@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Lending;
 
 return new class extends Migration
 {
@@ -14,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('books', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Lending::class);
 
             $table->integer('isbn'); // ISBN
             $table->string('title'); // Titel
-            $table->string('description'); // Beschreibung
+            $table->string('description')->nullable(); // Beschreibung
             $table->string('publisher'); // Verlag
             $table->float('price'); // Preis
+            $table->string('author'); // Autor
             $table->string('category'); // Kategorie
 
             $table->timestamps();
@@ -34,4 +33,5 @@ return new class extends Migration
     {
         Schema::dropIfExists('books');
     }
+
 };

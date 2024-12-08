@@ -17,7 +17,12 @@ class LibrarianFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'username' => fake()->userName(),
+            'e-mail' => fake()->email(),
+            'firstname' => fake()->firstName(),
+            'lastname' => fake()->lastName(),
+            'password' => fake()->password(),
         ];
     }
 }
+

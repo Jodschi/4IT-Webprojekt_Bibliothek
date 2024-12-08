@@ -12,6 +12,7 @@ class Lending extends Model
     /** @use HasFactory<\Database\Factories\LendingFactory> */
     use HasFactory;
 
+    // Beziehung zur Buch-Tabelle
     public function book(): HasOne {
         return $this->hasOne(Book::class);
     }

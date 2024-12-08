@@ -22,6 +22,9 @@ class BookFactory extends Factory
             'description' => fake()->realText(),
             'publisher' => fake()->name(),
             'price' => fake()->randomFloat(),
+            'author' => fake()->name(),
+            'category' => fake()->word(),
         ];
     }
 }
+
