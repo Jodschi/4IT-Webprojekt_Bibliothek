@@ -1,9 +1,12 @@
 <script setup lang="ts">
-console.log("Hello");
+import Layout from '@/Components/Layout.vue';
 
 </script>
 
 <template>
-    <h1>Hello World!</h1>
+    <Layout>
+        <div class="bg-red-500 w-full h-full">
+        </div>
+    </Layout>
 </template>
 
