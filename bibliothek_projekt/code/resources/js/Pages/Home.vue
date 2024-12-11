@@ -31,8 +31,10 @@ const handleValueChange = debounce((value: string) => {
             <div id="book_output_container" class="space-y-4 mt-6">
                 <BookCard
                     title="TESTBUCH"
-                    dueDate="01.01.2000"
-                    :returned="true"
+                    category="Fantasy"
+                    :isAvailable="false"
+                    dueDate="2000.01.01"
+                    :returned="false"
                 />
                 
             </div>
