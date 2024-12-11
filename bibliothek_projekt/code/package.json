@@ -6,6 +6,7 @@
         "dev": "vite"
     },
     "devDependencies": {
+        "@types/lodash": "^4.17.13",
         "@vitejs/plugin-vue": "^5.2.1",
         "@vue/compiler-sfc": "^3.5.13",
         "@vue/tsconfig": "^0.7.0",
@@ -20,6 +21,7 @@
         "vue": "^3.5.13"
     },
     "dependencies": {
-        "@inertiajs/vue3": "^1.2.0"
+        "@inertiajs/vue3": "^1.2.0",
+        "lodash": "^4.17.21"
     }
 }
