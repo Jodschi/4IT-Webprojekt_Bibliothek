@@ -15,7 +15,7 @@
             </div>
         </header>
 
-        <main class="flex flex-grow p-4 bg-gradient-to-b from-yellow-900/80 to-yellow-800/80">
+        <main class="flex flex-grow py-10 px-64 bg-gradient-to-b from-yellow-900/80 to-yellow-800/80">
             <slot></slot>
         </main>
 
