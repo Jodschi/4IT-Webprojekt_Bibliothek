@@ -30,6 +30,7 @@ const pageProps = ref(usePage().props);
 const queryString = ref<string>('');
 const searchedBooks = ref<SearchedBooks>(usePage().props.searched_books as SearchedBooks || { data: [] });
 
+// jedes Mal, wenn sich die pageProps ändern, den queryString und die gesuchten Bücher aktualisieren
 watchEffect(() => {
     // Suchstring
     queryString.value = pageProps.value.search_query as string || '';
@@ -37,7 +38,7 @@ watchEffect(() => {
     searchedBooks.value = usePage().props.searched_books as SearchedBooks || { data: [] };
 });
 
-const getBooks = async (queryString: string) => {
+const getBooks = (queryString: string) => {
     try {
         router.get('/', { book_search: queryString }, {
             preserveScroll: true,
@@ -98,13 +99,6 @@ const handleValueChange = debounce((value: string) => {
                     :returned="true"
                 />
                 
-                <!-- <BookCard v-for="book in searchedBooks.data" :key="book.id"
-                    :title="TESTBUCH"
-                    :category="Fantasy"
-                    :isAvailable="false"
-                    :dueDate="2000.01.01"
-                    :returned="false"
-                /> -->
             </div>
 
         </div>

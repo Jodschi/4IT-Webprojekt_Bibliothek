@@ -13,17 +13,17 @@ class GuestController extends Controller
         // Suchstring, standardmäßig leerer String
         $searchString = $request->input('book_search', '');
         
+        // Bücher abfragen
         $searchedBooks = Book::query()
             ->when($searchString, function ($query, $searchString) {
                 $query
                     ->where('title', 'like', '%' . $searchString . '%') // nach Titel suchen
-                    ->orWhere('description', 'like', '%' . $searchString . '%'); // nach Autor suchen
+                    ->orWhere('description', 'like', '%' . $searchString . '%'); // alternativ auch nach Autor suchen
             })
-            ->orderBy('title', 'asc')
+            ->orderBy('title', 'asc') // nach Titel aufsteigen sortieren
             ->paginate(10) // jeweils nur 10 Bücher auf einmal laden
             ->withQueryString(); // bei der Paginierung den Suchstring beibehalten
 
-        // dd($searchString, $searchedBooks);
 
         // gefilterte Bücher an das Frontend weitersenden
         return Inertia::render('Home', [
@@ -31,4 +31,6 @@ class GuestController extends Controller
             "search_query" => $searchString,
         ]);
     }
+    
 }
+
