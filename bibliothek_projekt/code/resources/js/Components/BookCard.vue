@@ -28,10 +28,10 @@ const checkIfOverdue = (todayDateString:string, dueDateString:string): boolean =
     
     // Wenn das heutige Datum größer ist wie das Rückgabedatum, ist das Buch überfällig
     if (dueDate < todayDate) {
-        console.log("isOverdue:", isOverdue.value, todayDate, dueDate);
+        // console.log("isOverdue:", isOverdue.value, todayDate, dueDate);
         return true;
     } else {
-        console.log("isOverdue:", isOverdue.value, todayDate, dueDate);
+        // console.log("isOverdue:", isOverdue.value, todayDate, dueDate);
         return false;
     }
 
@@ -51,7 +51,7 @@ onMounted(() => {
 });
 
 watch(isOverdue, () => {
-    console.log("isOverdue:", isOverdue.value);
+    // console.log("isOverdue:", isOverdue.value);
 });
 
 </script>
@@ -63,7 +63,10 @@ watch(isOverdue, () => {
     <div class="ml-8">
         <div class="flex flex-col">
             <span v-html="title" class="font-semibold"></span>
-            <span v-html="category" class="text-black/60"></span>
+            <div>
+                <span class="text-black/60">Kategorie: </span>
+                <span v-html="category" class="text-black/60"></span>
+            </div>
         </div>
 
     </div>

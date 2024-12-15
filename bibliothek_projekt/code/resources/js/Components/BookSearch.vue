@@ -14,11 +14,9 @@ const handleInputChange = (event: Event) => {
 
 <template>
 
-<div>
-    <input @input="handleInputChange" v-bind="$attrs"
-        type="text" 
-        placeholder="Bücher suchen ..."
-    >
-</div>
+<input @input="handleInputChange" v-bind="$attrs"
+    type="text" 
+    placeholder="Bücher suchen ..."
+>
 
 </template>
