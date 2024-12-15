@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GuestController;
 
-Route::get('/', function () {
-    // return ("Test");
-    return inertia('Home');
-});
+Route::get('/', GuestController::class['index']);

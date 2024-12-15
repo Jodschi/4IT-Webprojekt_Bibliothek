@@ -10,7 +10,6 @@ const handleInputChange = (event: Event) => {
     emit('searchChanged', target.value);
 };
 
-
 </script>
 
 <template>
