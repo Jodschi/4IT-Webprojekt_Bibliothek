@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
+import NavLink from './NavLink.vue';
 
 </script>
 
@@ -6,8 +8,21 @@
 
     <div id="page-content" class="font-sans antialiased min-h-[100svh] bg-red-50 flex flex-col">
         <header class="bg-yellow-950 h-28 flex justify-between">
-            <div class="bg-black self-center h-4/5 w-[200px] ml-5">
-                
+            <div class="h-full bg-red-50/0 flex items-center space-x-6">
+                <div class="bg-black self-center h-4/5 w-[200px] mx-5 text-white">LOGO</div>
+
+                <NavLink href="/"
+                    :isActive="$page.url === '/' || $page.url.startsWith('/?book_search')"
+                >
+                    Alle Bücher
+                </NavLink>
+
+                <NavLink href="/ausleihen"
+                    :isActive="$page.url === '/ausleihen'"
+                >
+                    Ausleihen verwalten
+                </NavLink>
+
             </div>
 
             <div class="self-center mr-10">

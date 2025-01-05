@@ -1,6 +1,7 @@
 import type { App, DefineComponent } from "vue"
 import { createApp, h } from "vue"
 import { createInertiaApp } from "@inertiajs/vue3"
+import '../../node_modules/flowbite-vue/dist/index.css'
 
 // Type for Page Components
 type Pages = Record<string, DefineComponent>;

@@ -7,7 +7,7 @@ import { computed, onMounted, ref, watchEffect } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
 
-interface Book {
+export interface Book {
     id: number;
     title: string;
     author: string;
@@ -78,7 +78,7 @@ const handleValueChange = debounce((value: string) => {
 
 <template>
     <Layout>
-        <div class="bg-red-500/10 w-full flex flex-col">
+        <div class="w-full flex flex-col">
 
             <div id="book_search_container" class="mt-4">
                 <BookSearch
