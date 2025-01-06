@@ -16,4 +16,6 @@ class Lending extends Model
     public function book(): HasOne {
         return $this->hasOne(Book::class);
     }
+
+    protected $guarded = [];
 }

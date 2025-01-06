@@ -42,13 +42,27 @@ class LendingController extends Controller
 
 
     public function store(Request $request) {
-        $request->validate([
-            'book_id' => ['required', 'numeric'],
-            'librarian_id' => ['required', 'numeric'],
-            'borrower_name' => ['required', 'string'],
-            'borrow_date' => ['required', 'date'],
-            'due_date' => ['required', 'date'],
-            'returned' => ['nullable', 'boolean'],
-        ]);
+        // dd($request);
+        try {
+            $attributes = $request->validate([
+                'book_id' => ['required', 'numeric'],
+                'librarian_id' => ['nullable', 'numeric'],
+                'borrower_name' => ['required', 'string'],
+                'borrow_date' => ['required', 'date'],
+                'due_date' => ['required', 'date'],
+                'returned' => ['nullable', 'boolean'],
+            ]);
+    
+            $attributes['librarian_id'] = $attributes['librarian_id'] ?? 1;
+            $attributes['returned'] = $attributes['returned'] ?? false;
+    
+            Lending::create($attributes);
+    
+            return redirect('/ausleihen')->with("status", "success");
+            
+        } catch (\Throwable $th) {
+            dd($th);
+        }
+
     }
 }

@@ -1,15 +1,16 @@
 <script setup lang="ts">
+import type { Book } from '@/Pages/Home.vue';
 import { ref, watch } from 'vue';
 import { onMounted } from 'vue';
 
 const props = defineProps<{
     id: number;
-    title: string;
-    category: string;
-    author: string | null;
-    isAvailable: boolean | null | undefined;
-    dueDate: string | null | undefined;
-    returned: boolean | null | undefined;
+    borrowerName: string;
+    borrowDate: string;
+    dueDate: string;
+    returned: boolean;
+    isAvailable: boolean;
+    book: Book | null;
 }>();
 
 const isOverdue = ref<boolean>(true);
@@ -26,7 +27,6 @@ const getTodayDateFormatted = (): string => {
 const checkIfOverdue = (todayDateString:string, dueDateString:string): boolean => {
     const todayDate = new Date(todayDateString);
     const dueDate = new Date(dueDateString);
-
     
     // Wenn das heutige Datum größer ist wie das Rückgabedatum, ist das Buch überfällig
     if (dueDate < todayDate) {
@@ -36,19 +36,15 @@ const checkIfOverdue = (todayDateString:string, dueDateString:string): boolean =
         // console.log("isOverdue:", isOverdue.value, todayDate, dueDate);
         return false;
     }
-
-    
 }
 
 onMounted(() => {
-    if(props.dueDate) {
-        const currentDate: string = getTodayDateFormatted();
-    
-        if (checkIfOverdue(currentDate, props.dueDate) && !props.returned) {
-            isOverdue.value = true;
-        } else {
-            isOverdue.value = false;
-        }
+    const currentDate: string = getTodayDateFormatted();
+
+    if (checkIfOverdue(currentDate, props.dueDate) && !props.returned) {
+        isOverdue.value = true;
+    } else {
+        isOverdue.value = false;
     }
 });
 
@@ -64,16 +60,16 @@ watch(isOverdue, () => {
 <div class="h-16 rounded-md bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-between">
     <div class="ml-8">
         <div class="flex flex-col">
-            <span v-html="title" class="font-semibold"></span>
+            <span v-html="book?.title" class="font-semibold"></span>
             <div>
-                <span class="text-black/60">Kategorie: </span>
-                <span v-html="category" class="text-black/60"></span>
+                <span class="text-black/60">Ausgeliehen von: </span>
+                <span v-html="borrowerName" class="text-black/60"></span>
             </div>
         </div>
 
     </div>
 
-    <div class="mr-8" v-if="dueDate && isOverdue !== null && isOverdue !== undefined">
+    <div class="mr-8">
         <span v-if="!isOverdue">ausgeliehen bis: {{ dueDate }}</span>
         
         <span v-if="isOverdue" class="text-red-600">Überfällig - Rückgabedatum am {{ dueDate }}</span>

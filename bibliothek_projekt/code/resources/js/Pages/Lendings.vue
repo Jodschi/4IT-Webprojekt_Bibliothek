@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import Layout from '@/Components/Layout.vue';
 import BookSearch from '@/Components/BookSearch.vue';
-import BookCard from '@/Components/BookCard.vue';
+import BookSelection from '@/Components/BookSelection.vue';
 import debounce from 'lodash/debounce';
 import { computed, onMounted, ref, watchEffect, reactive } from 'vue';
 import { router, usePage, useForm } from '@inertiajs/vue3';
 import { FwbModal } from 'flowbite-vue';
+import { FwbDropdown } from 'flowbite-vue';
+import LendingCard from '@/Components/LendingCard.vue';
 
 import type { Book } from './Home.vue';
 
@@ -30,6 +32,7 @@ const pageProps = ref(usePage().props);
 
 const queryString = ref<string>('');
 const searchedLendings = ref<SearchedLendings>(usePage().props.searched_books as SearchedLendings || { data: [] });
+const books = ref<Book[]>(usePage().props.books as Book[] || []);
 
 // jedes Mal, wenn sich die pageProps ändern, den queryString und die gesuchten Bücher aktualisieren
 watchEffect(() => {
@@ -64,6 +67,12 @@ onMounted(() => {
     getLendings(queryString.value);
 })
 
+const getBookById = (id: number): Book => {
+    const filteredBook = books.value.find(item => item.id === id) as Book;
+    
+    return filteredBook;
+}
+
 // auf Änderungen im Suchfeld reagieren -> debounce drosselt das Senden von Daten 
 const handleValueChange = debounce((value: string) => {
 
@@ -87,22 +96,24 @@ const closeCreationModal = () => {
     creationModalVisible.value = false;
 }
 
-const date = ref(new Date().toISOString().split('T')[0]);
-
 const form = useForm({
     book_id: '',
     borrower_name: '',
-    borrow_date: '',
+    borrow_date: new Date().toISOString().split('T')[0],
     due_date: '',
 });
 
-const createLending = () => {
-    
-    console.log("Create Lending");
+
+const createLending = () => {    
     form.post('/ausleihen', {
-        
+        onSuccess: () => {
+            closeCreationModal();
+        }
     });
 }
+
+
+
 
 </script>
 
@@ -130,23 +141,50 @@ const createLending = () => {
                     <form @submit.prevent="createLending" method="POST" class="flex flex-col space-y-4 pb-6">
 
                         <div class="flex flex-col">
-                            <label for="book_id">Buch</label>
-                            <input type="number" name="book_id" id="book_id">
+                            <!-- <label for="book_id">Buch</label> -->
+                            <fwb-dropdown placement="bottom" text="Buch auswählen">
+                                <template #trigger>
+                                    <div
+                                        class="cursor-pointer px-4 py-2 bg-yellow-800/70 hover:bg-yellow-900/80 transition-colors text-white rounded-lg">
+                                        Buch auswählen
+                                    </div>
+                                </template>
+
+                                
+                                <template #default>
+                                    <div class="">
+                                        <BookSelection
+                                            class="bg-gray-200"
+                                            v-for="book in books"
+                                            :id="book.id"
+                                            :category="book.category"
+                                            :title="book.title"
+                                            :author="book.author"
+                                            :dueDate="null"
+                                            :isAvailable="null"
+                                            :returned="null"
+                                        />
+                                        
+                                    </div>
+                                </template>
+
+                            </fwb-dropdown>
+
                         </div>
 
                         <div class="flex flex-col">
                             <label for="borrower_name">Name des Ausleihers</label>
-                            <input type="text" name="borrower_name" id="borrower_name">
+                            <input v-model="form.borrower_name" type="text" name="borrower_name" id="borrower_name" required>
                         </div>
 
                         <div class="flex flex-col">
                             <label for="borrow_date">Ausborgedatum</label>
-                            <input type="date" name="borrow_date" id="borrow_date" v-model="date">
+                            <input v-model="form.borrow_date" type="date" name="borrow_date" id="borrow_date" required>
                         </div>
 
                         <div class="flex flex-col">
                             <label for="due_date">Ausborgefrist (Deadline)</label>
-                            <input type="date" name="due_date" id="due_date">
+                            <input v-model="form.due_date" type="date" name="due_date" id="due_date" required>
                         </div>
 
                         <button type="submit" :disabled="form.processing" class="self-start bg-yellow-300 rounded-lg py-2 px-4">
@@ -167,13 +205,16 @@ const createLending = () => {
                 />
             </div> -->
             
+
             <div id="lending_output_container" class="space-y-4 mt-6">
-                <BookCard v-for="lending in searchedLendings.data" :key="lending.id"
-                    :title="lending.borrower_name"
-                    category="Ausleihe"
-                    :isAvailable="true"
+                <LendingCard v-for="lending in searchedLendings.data"
+                    :id="lending.id"
+                    :borrowerName="lending.borrower_name"
+                    :borrowDate="lending.borrow_date" 
+                    :book="getBookById(lending.id)"
                     :dueDate="lending.due_date"
-                    :returned="lending.returned"
+                    :returned="Boolean(lending.returned)"
+                    :isAvailable="true"
                 />
                 
             </div>
