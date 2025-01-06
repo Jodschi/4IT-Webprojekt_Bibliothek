@@ -65,4 +65,32 @@ class LendingController extends Controller
         }
 
     }
+
+    public function update(Request $request) {
+        // dd($request);
+        try {
+            $attributes = $request->validate([
+                'lending_id' => ['required', 'numeric'],
+                'book_id' => ['required', 'numeric'],
+                'librarian_id' => ['nullable', 'numeric'],
+                'borrower_name' => ['required', 'string'],
+                'borrow_date' => ['required', 'date'],
+                'due_date' => ['required', 'date'],
+                'returned' => ['nullable', 'boolean'],
+            ]);
+    
+            $attributes['librarian_id'] = $attributes['librarian_id'] ?? 1;
+            $attributes['returned'] = $attributes['returned'] ?? false;
+    
+            $updatedLending = Lending::findOrFail($attributes['lending_id']);
+
+            $updatedLending->update($attributes);
+    
+            return redirect('/ausleihen')->with("status", "success");
+            
+        } catch (\Throwable $th) {
+            dd($th);
+        }
+
+    }
 }

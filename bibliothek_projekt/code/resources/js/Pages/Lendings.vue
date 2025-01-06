@@ -87,6 +87,7 @@ const handleValueChange = debounce((value: string) => {
 // Modalfenster Logik
 
 const creationModalVisible = ref(false);
+const editModalVisible = ref(false);
 
 const openCreationModal = () => {
     creationModalVisible.value = true;
@@ -94,6 +95,14 @@ const openCreationModal = () => {
 
 const closeCreationModal = () => {
     creationModalVisible.value = false;
+}
+
+const openEditModal = () => {
+    editModalVisible.value = true;
+}
+
+const closeEditModal = () => {
+    editModalVisible.value = false;
 }
 
 const form = useForm({
@@ -194,16 +203,6 @@ const createLending = () => {
                 </template>
 
             </fwb-modal>
-
-            <!-- <div id="book_search_container" class="mt-4">
-                <LendingSearch
-                    class="rounded-2xl h-12 w-full px-10"
-                    @searchChanged="handleValueChange"
-                    name="book_search"
-                    id="book_search"
-                    :value="queryString"
-                />
-            </div> -->
             
 
             <div id="lending_output_container" class="space-y-4 mt-6">
@@ -215,10 +214,12 @@ const createLending = () => {
                     :dueDate="lending.due_date"
                     :returned="Boolean(lending.returned)"
                     :isAvailable="true"
+                    @on-edit="openEditModal"
                 />
                 
             </div>
 
+            
 
         </div>
     </Layout>

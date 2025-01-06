@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Book } from '@/Pages/Home.vue';
-import { ref, watch } from 'vue';
-import { onMounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 
 const props = defineProps<{
     id: number;
@@ -12,6 +11,16 @@ const props = defineProps<{
     isAvailable: boolean;
     book: Book | null;
 }>();
+
+const emit = defineEmits(['onEdit', 'onDelete']);
+
+const handleEdit = () => {
+    emit('onEdit', {id: props.id});
+}
+
+const handleDelete = () => {
+    emit('onDelete', {id: props.id});
+}
 
 const isOverdue = ref<boolean>(true);
 
@@ -52,28 +61,48 @@ watch(isOverdue, () => {
     // console.log("isOverdue:", isOverdue.value);
 });
 
+
+
+
 </script>
 
 
 <template>
 
-<div class="h-16 rounded-md bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-between">
-    <div class="ml-8">
-        <div class="flex flex-col">
-            <span v-html="book?.title" class="font-semibold"></span>
-            <div>
-                <span class="text-black/60">Ausgeliehen von: </span>
-                <span v-html="borrowerName" class="text-black/60"></span>
+<div class="h-32 rounded-md bg-gradient-to-r from-yellow-100 to-yellow-200 justify-between flex flex-col p-5">
+    
+    <div class="flex ml-8 justify-between">
+        <div class="">
+            <div class="flex flex-col">
+                <span v-html="book?.title" class="font-semibold"></span>
+                <div>
+                    <span class="text-black/60">Ausgeliehen von: </span>
+                    <span v-html="borrowerName" class="text-black/60"></span>
+                </div>
             </div>
+            
+        </div>
+        
+        <div class="mr-8 ">
+            <span v-if="!isOverdue">ausgeliehen bis: {{ dueDate }}</span>
+            
+            <span v-if="isOverdue" class="text-red-600">Überfällig - Rückgabedatum am {{ dueDate }}</span>
+        </div>
+    </div>
+    
+
+    <div class="ml-8 flex space-x-5 font-semibold">
+        <div>
+            <button @click="handleEdit" 
+                class="text-blue-500">Bearbeiten</button>
         </div>
 
+        <div>
+            <button @click="handleDelete" 
+                class="text-red-500">Löschen</button>
+        </div>
     </div>
 
-    <div class="mr-8">
-        <span v-if="!isOverdue">ausgeliehen bis: {{ dueDate }}</span>
-        
-        <span v-if="isOverdue" class="text-red-600">Überfällig - Rückgabedatum am {{ dueDate }}</span>
-    </div>
 </div>
 
 </template>
