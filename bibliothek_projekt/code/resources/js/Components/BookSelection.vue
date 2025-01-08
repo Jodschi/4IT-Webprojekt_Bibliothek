@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { onMounted } from 'vue';
+import { ref, watch, onMounted, defineEmits } from 'vue';
 
 const props = defineProps<{
     id: number;
@@ -12,14 +11,21 @@ const props = defineProps<{
     returned: boolean | null | undefined;
 }>();
 
+const emit = defineEmits(['on-select']);
+
+const handleClick = () => {
+    emit('on-select', props.id);
+}
+
+
 </script>
 
 
 <template>
 
-<div>
+<button @click="handleClick">
     <div class="ml-8">
-        <div class="flex flex-col">
+        <div class="flex flex-col" >
             <span v-html="title" class="font-semibold"></span>
             <div>
                 <span class="text-black/60">Kategorie: </span>
@@ -29,6 +35,6 @@ const props = defineProps<{
 
     </div>
 
-</div>
+</button>
 
 </template>

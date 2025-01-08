@@ -105,6 +105,18 @@ const closeEditModal = () => {
     editModalVisible.value = false;
 }
 
+const bookSelectionOpen = ref<boolean>(false);
+const selectedBook = ref<number|undefined>(undefined);
+
+const handleBookSelection = (id: number) => {
+    console.log("Book Selected: ", id);
+    selectedBook.value = id;
+};
+
+const closeBookSelection = () => {
+    bookSelectionOpen.value = false;
+}
+
 const form = useForm({
     book_id: '',
     borrower_name: '',
@@ -159,11 +171,12 @@ const createLending = () => {
                                     </div>
                                 </template>
 
-                                
-                                <template #default>
-                                    <div class="">
+
+                                <template #default v-if="openBookSelection()">
+                                    <div class="bg-gray-100 flex flex-col p-2 space-y-2 rounded-sm overflow-y-auto h-72 w-96">
                                         <BookSelection
-                                            class="bg-gray-200"
+                                            @on-select="handleBookSelection"
+                                            class="bg-gray-200 rounded-lg py-2 w-full"
                                             v-for="book in books"
                                             :id="book.id"
                                             :category="book.category"
@@ -179,6 +192,10 @@ const createLending = () => {
 
                             </fwb-dropdown>
 
+                        </div>
+
+                        <div v-if="selectedBook !== undefined">
+                            <span v-html="'Buch ausgewählt: ' + getBookById(selectedBook).title"></span>
                         </div>
 
                         <div class="flex flex-col">
