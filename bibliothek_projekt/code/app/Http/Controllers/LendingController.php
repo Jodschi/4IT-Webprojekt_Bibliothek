@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Lending;
 use App\Models\Book;
+use Inertia\Response;
 
 class LendingController extends Controller
 {
@@ -57,8 +58,8 @@ class LendingController extends Controller
             $attributes['returned'] = $attributes['returned'] ?? false;
     
             Lending::create($attributes);
-    
-            return redirect('/ausleihen')->with("status", "success");
+
+            return redirect('/ausleihen');
             
         } catch (\Throwable $th) {
             dd($th);
@@ -67,10 +68,9 @@ class LendingController extends Controller
     }
 
     public function update(Request $request) {
-        // dd($request);
+        // dd($request->request);
         try {
             $attributes = $request->validate([
-                'lending_id' => ['required', 'numeric'],
                 'book_id' => ['required', 'numeric'],
                 'librarian_id' => ['nullable', 'numeric'],
                 'borrower_name' => ['required', 'string'],
@@ -78,12 +78,13 @@ class LendingController extends Controller
                 'due_date' => ['required', 'date'],
                 'returned' => ['nullable', 'boolean'],
             ]);
+
+            $id = $request->input('lending_id');
     
             $attributes['librarian_id'] = $attributes['librarian_id'] ?? 1;
             $attributes['returned'] = $attributes['returned'] ?? false;
     
-            $updatedLending = Lending::findOrFail($attributes['lending_id']);
-
+            $updatedLending = Lending::findOrFail($id);
             $updatedLending->update($attributes);
     
             return redirect('/ausleihen')->with("status", "success");
@@ -93,4 +94,17 @@ class LendingController extends Controller
         }
 
     }
+
+    public function destroy($id) {
+        try {
+            $lending = Lending::findOrFail($id);
+            $lending->delete();
+
+            return redirect('/ausleihen')->with("status", "success");
+        } catch (\Throwable $th) {
+            dd($th);
+        }
+    }
+
+    
 }

@@ -15,11 +15,11 @@ const props = defineProps<{
 const emit = defineEmits(['onEdit', 'onDelete']);
 
 const handleEdit = () => {
-    emit('onEdit', {id: props.id});
+    emit('onEdit', props.id);
 }
 
 const handleDelete = () => {
-    emit('onDelete', {id: props.id});
+    emit('onDelete', props.id);
 }
 
 const isOverdue = ref<boolean>(true);

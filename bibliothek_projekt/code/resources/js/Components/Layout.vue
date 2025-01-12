@@ -18,7 +18,7 @@ import NavLink from './NavLink.vue';
                 </NavLink>
 
                 <NavLink href="/ausleihen"
-                    :isActive="$page.url === '/ausleihen'"
+                    :isActive="$page.url === '/ausleihen' || $page.url.startsWith('/ausleihen?lending_search')"
                 >
                     Ausleihen verwalten
                 </NavLink>

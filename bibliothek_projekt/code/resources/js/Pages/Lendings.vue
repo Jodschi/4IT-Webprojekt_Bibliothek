@@ -8,12 +8,13 @@ import { router, usePage, useForm } from '@inertiajs/vue3';
 import { FwbModal } from 'flowbite-vue';
 import { FwbDropdown } from 'flowbite-vue';
 import LendingCard from '@/Components/LendingCard.vue';
+import EditLendingModal from '@/Components/EditLendingModal.vue';
 
 import type { Book } from './Home.vue';
 
-interface Lending {
+export interface Lending {
     id: number;
-    book: Book;
+    book_id: number;
     librarian_id: number;
     borrower_name: string;
     borrow_date: string;
@@ -73,6 +74,11 @@ const getBookById = (id: number): Book => {
     return filteredBook;
 }
 
+const getLendingById = (id: number): Lending => {
+    const filteredLending = searchedLendings.value.data.find(item => item.id === id) as Lending;
+    return filteredLending;
+}
+
 // auf Änderungen im Suchfeld reagieren -> debounce drosselt das Senden von Daten 
 const handleValueChange = debounce((value: string) => {
 
@@ -97,28 +103,43 @@ const closeCreationModal = () => {
     creationModalVisible.value = false;
 }
 
-const openEditModal = () => {
+const clickedLending = ref<number|null>(null);
+
+const openEditModal = (id: number) => {
     editModalVisible.value = true;
+    clickedLending.value = id;
 }
 
 const closeEditModal = () => {
     editModalVisible.value = false;
+    clickedLending.value = null;
 }
 
-const bookSelectionOpen = ref<boolean>(false);
 const selectedBook = ref<number|undefined>(undefined);
 
 const handleBookSelection = (id: number) => {
     console.log("Book Selected: ", id);
     selectedBook.value = id;
+    form.book_id = id;
 };
 
-const closeBookSelection = () => {
-    bookSelectionOpen.value = false;
-}
+const handleLendingDeletion = (id: number) => {
+    if (confirm('Sind Sie sicher, dass Sie diese Ausleihe löschen möchten?')) {
+        router.delete(`/ausleihen/${id}`, {
+            onSuccess: () => {
+                // Aktualisieren Sie die Liste der Ausleihen nach dem Löschen
+                getLendings(queryString.value);
+            },
+            onError: (error) => {
+                console.error('Error deleting lending:', error);
+            }
+        });
+    }
+};
+
 
 const form = useForm({
-    book_id: '',
+    book_id: -1,
     borrower_name: '',
     borrow_date: new Date().toISOString().split('T')[0],
     due_date: '',
@@ -129,10 +150,18 @@ const createLending = () => {
     form.post('/ausleihen', {
         onSuccess: () => {
             closeCreationModal();
+        },
+        onError: (error) => {
+            console.error('Error creating lending:', error);
         }
     });
 }
 
+const onSuccessfulPatch = () => {
+    closeEditModal();
+    // getLendings(queryString.value);
+    console.log('onSuccessfulPatch');
+}
 
 
 
@@ -163,16 +192,17 @@ const createLending = () => {
 
                         <div class="flex flex-col">
                             <!-- <label for="book_id">Buch</label> -->
-                            <fwb-dropdown placement="bottom" text="Buch auswählen">
+                            <fwb-dropdown placement="bottom" text="Buch auswählen" close-inside>
                                 <template #trigger>
                                     <div
-                                        class="cursor-pointer px-4 py-2 bg-yellow-800/70 hover:bg-yellow-900/80 transition-colors text-white rounded-lg">
+                                        class="cursor-pointer select-none px-4 py-2 bg-yellow-800/70 hover:bg-yellow-900/80 transition-colors text-white rounded-lg">
                                         Buch auswählen
+                                        
                                     </div>
                                 </template>
 
 
-                                <template #default v-if="openBookSelection()">
+                                <template #default>
                                     <div class="bg-gray-100 flex flex-col p-2 space-y-2 rounded-sm overflow-y-auto h-72 w-96">
                                         <BookSelection
                                             @on-select="handleBookSelection"
@@ -195,7 +225,16 @@ const createLending = () => {
                         </div>
 
                         <div v-if="selectedBook !== undefined">
-                            <span v-html="'Buch ausgewählt: ' + getBookById(selectedBook).title"></span>
+                            <BookSelection
+                                class="bg-yellow-100/50 rounded-lg py-2 w-1/2 pointer-events-none"
+                                :id="getBookById(selectedBook).id"
+                                :category="getBookById(selectedBook).category"
+                                :title="getBookById(selectedBook).title"
+                                :author="getBookById(selectedBook).author"
+                                :dueDate="null"
+                                :isAvailable="null"
+                                :returned="null"
+                            />
                         </div>
 
                         <div class="flex flex-col">
@@ -221,17 +260,25 @@ const createLending = () => {
 
             </fwb-modal>
             
+            <EditLendingModal v-if="editModalVisible && clickedLending" @close="closeEditModal"
+                :books="books"
+                :lending="getLendingById(clickedLending)"
+                :edit-modal-visible="editModalVisible"
+                :close-edit-modal="closeEditModal"
+                v-on:on-successful-patch="onSuccessfulPatch"
+            />
 
             <div id="lending_output_container" class="space-y-4 mt-6">
                 <LendingCard v-for="lending in searchedLendings.data"
                     :id="lending.id"
                     :borrowerName="lending.borrower_name"
                     :borrowDate="lending.borrow_date" 
-                    :book="getBookById(lending.id)"
+                    :book="getBookById(lending.book_id)"
                     :dueDate="lending.due_date"
                     :returned="Boolean(lending.returned)"
                     :isAvailable="true"
                     @on-edit="openEditModal"
+                    @on-delete="handleLendingDeletion"
                 />
                 
             </div>

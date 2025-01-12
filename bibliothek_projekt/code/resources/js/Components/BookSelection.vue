@@ -23,7 +23,7 @@ const handleClick = () => {
 
 <template>
 
-<button @click="handleClick">
+<button @click.prevent="handleClick">
     <div class="ml-8">
         <div class="flex flex-col" >
             <span v-html="title" class="font-semibold"></span>
