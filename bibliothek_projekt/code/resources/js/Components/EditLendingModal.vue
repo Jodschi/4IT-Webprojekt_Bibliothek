@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Lending } from '@/Pages/Lendings.vue';
-import type { Book } from '@/Pages/Home.vue';
+import type { Book } from '@/Pages/Books.vue';
 import { ref, onMounted, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { FwbModal } from 'flowbite-vue';

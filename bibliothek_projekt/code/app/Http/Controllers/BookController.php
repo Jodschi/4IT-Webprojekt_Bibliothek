@@ -25,7 +25,7 @@ class BookController extends Controller
 
 
         // gefilterte Bücher an das Frontend weitersenden
-        return Inertia::render('Home', [
+        return Inertia::render('Books', [
             "searched_books" => $searchedBooks,
             "search_query" => $searchString,
         ]);

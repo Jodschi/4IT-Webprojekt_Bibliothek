@@ -1,29 +1,44 @@
 <template>
-    <div class="login-container">
-        <h1>Login</h1>
-        <form @submit.prevent="handleLogin">
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" v-model="email" id="email" required />
+    <div class="h-full bg-red-50/0 items-center space-x-6 ">
+        <main class="flex justify-center items-center min-h-svh bg-gradient-to-b from-yellow-900/80 to-yellow-800/80">
+            
+            <div class="h-96 min-w-1/4 bg-white/20 p-10 rounded-lg text-2xl shadow-2xl">
+                <form @submit.prevent="handleLogin" class="flex flex-col space-y-4 justify-center items-center">
+                    <h1 class="font-semibold mb-6 text-4xl">Als Bibliothekar anmelden</h1>
+                    <div class="flex flex-col space-y-2">
+                        <label for="email">Email:</label>
+                        <input type="email" v-model="form.email" id="email" required />
+                    </div>
+                    <div class="flex flex-col space-y-2">
+                        <label for="password">Password:</label>
+                        <input type="password" v-model="form.password" id="password" required />
+                    </div>
+                    <button class="rounded-xl px-5 py-2 bg-white/20" type="submit">Login</button>
+                </form>
             </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" v-model="password" id="password" required />
-            </div>
-            <button type="submit">Login</button>
-        </form>
+
+        </main>
     </div>
 </template>
 
 <script setup>
+import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
-const email = ref('');
-const password = ref('');
+
+const form = useForm({
+    email: '',
+    password: '',
+});
 
 const handleLogin = () => {
     // Handle login logic here
     console.log('Email:', email.value);
     console.log('Password:', password.value);
+
+    form.post(route('login'));
 };
+
+
+
 </script>

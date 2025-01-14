@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Book } from '@/Pages/Home.vue';
+import type { Book } from '@/Pages/Books.vue';
 import { ref, watch, onMounted } from 'vue';
 
 const props = defineProps<{

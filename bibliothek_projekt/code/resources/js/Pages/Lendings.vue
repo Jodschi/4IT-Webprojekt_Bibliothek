@@ -10,7 +10,7 @@ import { FwbDropdown } from 'flowbite-vue';
 import LendingCard from '@/Components/LendingCard.vue';
 import EditLendingModal from '@/Components/EditLendingModal.vue';
 
-import type { Book } from './Home.vue';
+import type { Book } from './Books.vue';
 
 export interface Lending {
     id: number;
