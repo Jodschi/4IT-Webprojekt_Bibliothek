@@ -26,13 +26,16 @@ class AuthenticatedSessionController extends Controller
             ]);
         }
 
-        return redirect()->route('books.index');
+        return redirect()->route('books.index')->with('reload', true);
     }
 
     public function destroy()
     {
         Auth::logout();
 
-        return redirect()->route('books.index');
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+
+        return redirect()->route('books.index')->with('reload', true);
     }
 }

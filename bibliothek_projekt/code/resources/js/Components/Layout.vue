@@ -1,8 +1,18 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 import NavLink from './NavLink.vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 
+interface AuthProp {
+    user: Object;
+}
+
+const user = ref((usePage().props.auth as AuthProp).user);
+
+watch(() => usePage().props.auth as AuthProp, (newAuth: AuthProp) => {
+    user.value = newAuth.user; // Update the `user` ref when `auth` changes
+});
 
 </script>
 
@@ -19,7 +29,7 @@ import { ref } from 'vue';
                     Alle Bücher
                 </NavLink>
 
-                <NavLink href="/ausleihen" v-if="$page.props.auth"
+                <NavLink href="/ausleihen" v-if="user"
                     :isActive="$page.url === '/ausleihen' || $page.url.startsWith('/ausleihen?lending_search')"
                 >
                     Ausleihen verwalten
@@ -27,13 +37,16 @@ import { ref } from 'vue';
 
             </div>
 
-            <div class="self-center mr-10" v-if="$page.props.auth">
-                <form action="/logout" method="post">
-                    <button type="submit" class="text-xl text-white font-semibold">Ausloggen</button>
-                </form>
+            <div class="self-center mr-10" v-if="user">
+                <Link 
+                    @success="() => {
+                        router.reload();
+                    }"
+                    as="button"
+                    method="post" href="/logout" class="text-xl text-white font-semibold">Ausloggen</Link>
             </div>
 
-            <div class="self-center mr-10" v-if="!$page.props.auth">
+            <div class="self-center mr-10" v-if="!user">
                 <Link href="/login" class="text-xl text-white font-semibold">Login</Link>
             </div>
 
@@ -45,7 +58,7 @@ import { ref } from 'vue';
 
         <footer class="p-4 bg-amber-900/50">
             &copy; SCHULBIBLIOTHEK 2024 &trade;
-        </footer>    
+        </footer>
     </div>
     
 

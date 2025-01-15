@@ -16,6 +16,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // User anlegen
+        User::factory()->create([
+            'name' => 'Admin',
+            'email' => 'admin@admin.com',
+            'password' => 'admin',
+        ]);
+
         // Mit factories Testdaten generien
         Librarian::factory()->count(4)->create();
         Book::factory()->count(20)->create();
