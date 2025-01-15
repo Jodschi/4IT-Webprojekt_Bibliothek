@@ -92,10 +92,9 @@ const handleValueChange = debounce((value: string) => {
             
             <div id="book_output_container" class="space-y-4 mt-6">
                 <BookCard v-for="book in searchedBooks.data" :key="book.id"
-                    :title="book.title"
-                    :category="book.category"
-                    :isAvailable="true"
-                    dueDate=""
+                    :book="book"
+                    :availabe="true"
+                    :due-date="undefined"
                     :returned="true"
                 />
                 

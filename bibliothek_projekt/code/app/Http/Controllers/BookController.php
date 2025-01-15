@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Book;
+use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
@@ -26,6 +27,7 @@ class BookController extends Controller
 
         // gefilterte Bücher an das Frontend weitersenden
         return Inertia::render('Books', [
+            "auth" => Auth::user(),
             "searched_books" => $searchedBooks,
             "search_query" => $searchString,
         ]);

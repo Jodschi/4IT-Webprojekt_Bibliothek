@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import NavLink from './NavLink.vue';
+import { ref } from 'vue';
+
 
 </script>
 
@@ -17,7 +19,7 @@ import NavLink from './NavLink.vue';
                     Alle Bücher
                 </NavLink>
 
-                <NavLink href="/ausleihen"
+                <NavLink href="/ausleihen" v-if="$page.props.auth"
                     :isActive="$page.url === '/ausleihen' || $page.url.startsWith('/ausleihen?lending_search')"
                 >
                     Ausleihen verwalten
@@ -25,9 +27,16 @@ import NavLink from './NavLink.vue';
 
             </div>
 
-            <div class="self-center mr-10">
-                <button class="text-xl text-white font-semibold">Ausloggen</button>
+            <div class="self-center mr-10" v-if="$page.props.auth">
+                <form action="/logout" method="post">
+                    <button type="submit" class="text-xl text-white font-semibold">Ausloggen</button>
+                </form>
             </div>
+
+            <div class="self-center mr-10" v-if="!$page.props.auth">
+                <Link href="/login" class="text-xl text-white font-semibold">Login</Link>
+            </div>
+
         </header>
 
         <main class="flex flex-grow py-10 px-64 bg-gradient-to-b from-yellow-900/80 to-yellow-800/80">

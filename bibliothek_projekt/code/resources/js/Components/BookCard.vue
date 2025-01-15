@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { onMounted } from 'vue';
+import type { Book } from '@/Pages/Books.vue';
 
 const props = defineProps<{
-    id: number;
-    title: string;
-    category: string;
-    author: string | null;
-    isAvailable: boolean | null | undefined;
-    dueDate: string | null | undefined;
-    returned: boolean | null | undefined;
+    book: Book;
+    dueDate: string | undefined;
+    availabe: boolean;
+    returned: boolean;
 }>();
 
 const isOverdue = ref<boolean>(true);
@@ -64,10 +62,10 @@ watch(isOverdue, () => {
 <div class="h-16 rounded-md bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-between">
     <div class="ml-8">
         <div class="flex flex-col">
-            <span v-html="title" class="font-semibold"></span>
+            <span v-html="book.title" class="font-semibold"></span>
             <div>
                 <span class="text-black/60">Kategorie: </span>
-                <span v-html="category" class="text-black/60"></span>
+                <span v-html="book.category" class="text-black/60"></span>
             </div>
         </div>
 

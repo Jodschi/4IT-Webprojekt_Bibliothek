@@ -11,11 +11,10 @@ Route::middleware(['guest'])->group(function () {
     Route::get('/', [BookController::class, 'index'])->name('books.index');
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('/register', [RegisteredUserController::class, 'store']);
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
 
-Route::middleware(['guest'])->group(function () {
+Route::middleware(['auth'])->group(function () {
 
     Route::controller(BookController::class)->group(function () {
         Route::get('/buecher/erstellen', 'create')->name('books.create');
@@ -35,7 +34,3 @@ Route::middleware(['guest'])->group(function () {
     });
 
 });    
-
-
-
-
