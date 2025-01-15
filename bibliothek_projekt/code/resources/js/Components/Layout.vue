@@ -26,7 +26,9 @@ import NavLink from './NavLink.vue';
             </div>
 
             <div class="self-center mr-10">
-                <button class="text-xl text-white font-semibold">Ausloggen</button>
+                <form action="/logout" method="post">
+                    <button type="submit" class="text-xl text-white font-semibold">Ausloggen</button>
+                </form>
             </div>
         </header>
 

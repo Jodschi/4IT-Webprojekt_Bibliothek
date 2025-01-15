@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Auth;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class AuthenticatedSessionController extends Controller
@@ -20,7 +20,7 @@ class AuthenticatedSessionController extends Controller
             'password' => 'required',
         ]);
 
-        if (!auth()->attempt($request->only('email', 'password'))) {
+        if (!Auth::attempt($request->only('email', 'password'))) {
             return back()->withErrors([
                 'email' => 'Die angegebenen Anmeldedaten sind ungültig.',
             ]);
@@ -31,8 +31,8 @@ class AuthenticatedSessionController extends Controller
 
     public function destroy()
     {
-        auth()->logout();
+        Auth::logout();
 
-        return redirect()->route('login');
+        return redirect()->route('books.indexs');
     }
 }
