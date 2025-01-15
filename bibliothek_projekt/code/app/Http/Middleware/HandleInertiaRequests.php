@@ -37,7 +37,7 @@ class HandleInertiaRequests extends Middleware
     {
         return array_merge(parent::share($request), [
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user(), // Gibt NULL zurück, wenn kein user angemeldet ist
             ]
         ]);
     }

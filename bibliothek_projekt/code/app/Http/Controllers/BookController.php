@@ -27,15 +27,12 @@ class BookController extends Controller
 
         // gefilterte Bücher an das Frontend weitersenden
         return Inertia::render('Books', [
-            "auth" => Auth::user(),
+            "auth" => [
+                "user" => Auth::user(), 
+            ],
             "searched_books" => $searchedBooks,
             "search_query" => $searchString,
         ]);
-    }
-
-    public function show($id) {
-        $book = Book::findOrFail($id);
-        return response()->json($book);
     }
 
     public function store(Request $request) {
