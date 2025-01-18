@@ -9,8 +9,11 @@ import { FwbModal } from 'flowbite-vue';
 import { FwbDropdown } from 'flowbite-vue';
 import LendingCard from '@/Components/LendingCard.vue';
 import EditLendingModal from '@/Components/EditLendingModal.vue';
+import LibrarianSelection from '@/Components/LibrarianSelection.vue';
 
 import type { Book } from './Books.vue';
+import type { Librarian }  from '@/Types/Librarian';
+import type { AuthProp } from '@/Types/Auth';
 
 export interface Lending {
     id: number;
@@ -34,6 +37,10 @@ const pageProps = ref(usePage().props);
 const queryString = ref<string>('');
 const searchedLendings = ref<SearchedLendings>(usePage().props.searched_books as SearchedLendings || { data: [] });
 const books = ref<Book[]>(usePage().props.books as Book[] || []);
+const librarians = ref<Librarian[]>(usePage().props.librarians as Librarian[] || []);
+
+const user = ref((usePage().props.auth as AuthProp).user);
+const activeLibrarian = user.value as Librarian;
 
 // jedes Mal, wenn sich die pageProps ändern, den queryString und die gesuchten Bücher aktualisieren
 watchEffect(() => {
@@ -79,6 +86,11 @@ const getLendingById = (id: number): Lending => {
     return filteredLending;
 }
 
+const getLibrarianById = (id: number): Librarian => {
+    const filteredLibrarian = librarians.value.find(item => item.id === id) as Librarian;
+    return filteredLibrarian;
+}
+
 // auf Änderungen im Suchfeld reagieren -> debounce drosselt das Senden von Daten 
 const handleValueChange = debounce((value: string) => {
 
@@ -115,12 +127,19 @@ const closeEditModal = () => {
     clickedLending.value = null;
 }
 
-const selectedBook = ref<number|undefined>(undefined);
+const selectedBook = ref<number>(books.value[0].id); // Standardmäßig das erste Buch auswählen
+const selectedLibrarian = ref<number>(activeLibrarian.id); // Standardmäßig den angemeldeten Bibliothekar auswählen
 
 const handleBookSelection = (id: number) => {
     console.log("Book Selected: ", id);
     selectedBook.value = id;
     form.book_id = id;
+};
+
+const handleLibrarianSelection = (id: number) => {
+    console.log("Librarian Selected: ", id);
+    selectedLibrarian.value = id;
+    form.librarian_id = id;
 };
 
 const handleLendingDeletion = (id: number) => {
@@ -143,6 +162,7 @@ const form = useForm({
     borrower_name: '',
     borrow_date: new Date().toISOString().split('T')[0],
     due_date: '',
+    librarian_id: activeLibrarian.id,
 });
 
 
@@ -191,14 +211,19 @@ const onSuccessfulPatch = () => {
                     <form @submit.prevent="createLending" method="POST" class="flex flex-col space-y-4 pb-6">
 
                         <div class="flex flex-col">
-                            <!-- <label for="book_id">Buch</label> -->
+                            <label class="mb-2" for="book_id">Buch auswählen: </label>
                             <fwb-dropdown placement="bottom" text="Buch auswählen" close-inside>
                                 <template #trigger>
-                                    <div
-                                        class="cursor-pointer select-none px-4 py-2 bg-yellow-800/70 hover:bg-yellow-900/80 transition-colors text-white rounded-lg">
-                                        Buch auswählen
-                                        
-                                    </div>
+                                    <BookSelection
+                                        class="bg-yellow-100/50 rounded-lg py-2 px-5 select-none"
+                                        :id="getBookById(selectedBook).id"
+                                        :category="getBookById(selectedBook).category"
+                                        :title="getBookById(selectedBook).title"
+                                        :author="getBookById(selectedBook).author"
+                                        :dueDate="null"
+                                        :isAvailable="null"
+                                        :returned="null"
+                                    />
                                 </template>
 
 
@@ -206,7 +231,12 @@ const onSuccessfulPatch = () => {
                                     <div class="bg-gray-100 flex flex-col p-2 space-y-2 rounded-sm overflow-y-auto h-72 w-96">
                                         <BookSelection
                                             @on-select="handleBookSelection"
-                                            class="bg-gray-200 rounded-lg py-2 w-full"
+                                            class="rounded-lg py-2 w-full"
+                                            :class="{
+                                                'bg-yellow-400/10 pointer-events-none': selectedBook === book.id,
+                                                'bg-gray-200': selectedBook !== book.id
+                                            }"
+
                                             v-for="book in books"
                                             :id="book.id"
                                             :category="book.category"
@@ -224,18 +254,7 @@ const onSuccessfulPatch = () => {
 
                         </div>
 
-                        <div v-if="selectedBook !== undefined">
-                            <BookSelection
-                                class="bg-yellow-100/50 rounded-lg py-2 w-1/2 pointer-events-none"
-                                :id="getBookById(selectedBook).id"
-                                :category="getBookById(selectedBook).category"
-                                :title="getBookById(selectedBook).title"
-                                :author="getBookById(selectedBook).author"
-                                :dueDate="null"
-                                :isAvailable="null"
-                                :returned="null"
-                            />
-                        </div>
+                        
 
                         <div class="flex flex-col">
                             <label for="borrower_name">Name des Ausleihers</label>
@@ -252,6 +271,35 @@ const onSuccessfulPatch = () => {
                             <input v-model="form.due_date" type="date" name="due_date" id="due_date" required>
                         </div>
 
+                        <div class="flex flex-col">
+                            <label class="mb-2" for="book_id">Ausgeliehen von Bibliothekar: </label>
+                            <fwb-dropdown placement="bottom" text="Buch auswählen" close-inside>
+                                <template #trigger>
+                                    <LibrarianSelection
+                                        class="bg-yellow-100/50 rounded-lg py-2 px-5 select-none"
+                                        :librarian="getLibrarianById(selectedLibrarian)"
+                                    />
+                                </template>
+
+                                <template #default>
+                                    <div class="bg-gray-100 flex flex-col p-2 space-y-2 rounded-sm overflow-y-auto h-72 w-96">
+                                        <LibrarianSelection
+                                            v-for="librarian in librarians"
+                                            @on-select="handleLibrarianSelection"
+                                            class="rounded-lg py-2 w-full"
+                                            :class="{
+                                                'bg-yellow-400/10 pointer-events-none': selectedBook === librarian.id,
+                                                'bg-gray-200': selectedBook !== librarian.id
+                                            }"
+                                            :librarian="librarian"
+                                        />
+                                        
+                                    </div>
+                                </template>
+
+                            </fwb-dropdown>
+                        </div>
+
                         <button type="submit" :disabled="form.processing" class="self-start bg-yellow-300 rounded-lg py-2 px-4">
                             Erstellen
                         </button>
@@ -262,6 +310,7 @@ const onSuccessfulPatch = () => {
             
             <EditLendingModal v-if="editModalVisible && clickedLending" @close="closeEditModal"
                 :books="books"
+                :librarians="librarians"
                 :lending="getLendingById(clickedLending)"
                 :edit-modal-visible="editModalVisible"
                 :close-edit-modal="closeEditModal"

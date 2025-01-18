@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -35,10 +37,12 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = Auth::guard('librarian')->user() ? Auth::guard('librarian')->user() : null;
         return array_merge(parent::share($request), [
             'auth' => [
-                'user' => $request->user(), // Gibt NULL zurück, wenn kein user angemeldet ist
+                'user' => $user, // Gibt NULL zurück, wenn kein librarian angemeldet ist
             ]
+            
         ]);
     }
 }

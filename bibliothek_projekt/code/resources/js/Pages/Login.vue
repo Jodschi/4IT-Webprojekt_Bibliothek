@@ -1,9 +1,9 @@
 <template>
     <Layout>
-        <div class="bg-red-50/0 items-center space-x-6 ">    
-            <div class="min-w-1/4 bg-amber-950/40 p-10 rounded-xl text-2xl text-white shadow-2xl">
+        <div class="bg-red-50/0 flex flex-grow items-center justify-center space-x-6 ">    
+            <div class="h-full w-1/2 min-w-96 bg-amber-950/40 p-10 rounded-xl text-2xl text-white shadow-2xl flex justify-center items-center">
                 <form @submit.prevent="handleLogin" class="flex flex-col space-y-4 justify-center items-center">
-                    <h1 class="font-semibold mb-6 text-4xl">Als Bibliothekar anmelden</h1>
+                    <h1 class="font-semibold mb-10 text-5xl">Als Bibliothekar anmelden</h1>
                     <div class="flex flex-col space-y-2">
                         <label for="email">Email:</label>
                         <input class="rounded-md text-black" type="email" v-model="form.email" id="email" required />

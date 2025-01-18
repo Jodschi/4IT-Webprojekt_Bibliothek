@@ -18,7 +18,7 @@ class LibrarianFactory extends Factory
     {
         return [
             'username' => fake()->userName(),
-            'e-mail' => fake()->email(),
+            'email' => fake()->email(),
             'firstname' => fake()->firstName(),
             'lastname' => fake()->lastName(),
             'password' => fake()->password(),

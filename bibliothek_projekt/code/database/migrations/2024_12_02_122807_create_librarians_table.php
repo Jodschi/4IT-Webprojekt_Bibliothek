@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
 
             $table->string('username'); // Benutzername
-            $table->string('e-mail'); // E-Mail
+            $table->string('email'); // E-Mail
             $table->string('firstname'); // Vorname
             $table->string('lastname'); // Nachname
             $table->string('password'); // Passwort

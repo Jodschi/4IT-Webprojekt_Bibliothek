@@ -4,15 +4,19 @@ import NavLink from './NavLink.vue';
 import { ref, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 
-interface AuthProp {
-    user: Object;
-}
+import type { AuthProp } from '@/Types/Auth';
+
 
 const user = ref((usePage().props.auth as AuthProp).user);
 
+console.log('User:', user.value);
 watch(() => usePage().props.auth as AuthProp, (newAuth: AuthProp) => {
     user.value = newAuth.user; // Update the `user` ref when `auth` changes
+    if (user.value) {
+        console.log('User:', user.value);
+    }
 });
+
 
 </script>
 

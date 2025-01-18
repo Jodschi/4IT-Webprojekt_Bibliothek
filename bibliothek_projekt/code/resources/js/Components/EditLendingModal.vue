@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { Lending } from '@/Pages/Lendings.vue';
 import type { Book } from '@/Pages/Books.vue';
+import type { Librarian } from '@/Types/Librarian';
+import type { AuthProp } from '@/Types/Auth';
 import { ref, onMounted, watch } from 'vue';
-import { useForm } from '@inertiajs/vue3';
+import { useForm, usePage } from '@inertiajs/vue3';
 import { FwbModal } from 'flowbite-vue';
 import { FwbDropdown } from 'flowbite-vue';
 import BookSelection from '@/Components/BookSelection.vue';
@@ -10,9 +12,19 @@ import BookSelection from '@/Components/BookSelection.vue';
 const props = defineProps<{
     books: Book[];
     lending: Lending;
+    librarians: Librarian[];
     editModalVisible: boolean;
     closeEditModal: () => void;
 }>();
+
+// pageProps Objekt
+const pageProps = ref(usePage().props);
+
+const user = ref((usePage().props.auth as AuthProp).user);
+const activeLibrarian = user.value as Librarian;
+
+const selectedBook = ref<number>(props.lending.book_id);
+const selectedLibrarian = ref<number>(activeLibrarian.id); // Standardmäßig den angemeldeten Bibliothekar auswählen
 
 const emit = defineEmits(['onSuccessfulPatch']);
 
@@ -32,12 +44,17 @@ const getBookById = (id: number): Book => {
     return filteredBook;
 }
 
-const selectedBook = ref<number|undefined>(props.lending.book_id);
 
 const handleBookSelection = (id: number) => {
     console.log("Book Selected: ", id);
     selectedBook.value = id;
     form.book_id = id;
+};
+
+const handleLibrarianSelection = (id: number) => {
+    console.log("Librarian Selected: ", id);
+    selectedLibrarian.value = id;
+    form.librarian_id = id;
 };
 
 const handleEditSubmit = () => {
@@ -67,14 +84,19 @@ const handleEditSubmit = () => {
             <form @submit.prevent="handleEditSubmit" method="POST" class="flex flex-col space-y-4 pb-6">
 
                 <div class="flex flex-col">
-                    <!-- <label for="book_id">Buch</label> -->
+                    <label class="mb-2" for="book_id">Buch auswählen: </label>
                     <fwb-dropdown placement="bottom" text="Buch auswählen" close-inside>
                         <template #trigger>
-                            <div
-                                class="cursor-pointer select-none px-4 py-2 bg-yellow-800/70 hover:bg-yellow-900/80 transition-colors text-white rounded-lg">
-                                Buch auswählen
-                                
-                            </div>
+                            <BookSelection
+                                class="bg-yellow-100/50 rounded-lg py-2 px-5 select-none"
+                                :id="getBookById(selectedBook).id"
+                                :category="getBookById(selectedBook).category"
+                                :title="getBookById(selectedBook).title"
+                                :author="getBookById(selectedBook).author"
+                                :dueDate="null"
+                                :isAvailable="null"
+                                :returned="null"
+                            />
                         </template>
 
 
@@ -92,25 +114,11 @@ const handleEditSubmit = () => {
                                     :isAvailable="null"
                                     :returned="null"
                                 />
-                                
                             </div>
                         </template>
 
                     </fwb-dropdown>
 
-                </div>
-
-                <div v-if="selectedBook !== undefined">
-                    <BookSelection
-                        class="bg-yellow-100/50 rounded-lg py-2 w-1/2 pointer-events-none"
-                        :id="getBookById(selectedBook).id"
-                        :category="getBookById(selectedBook).category"
-                        :title="getBookById(selectedBook).title"
-                        :author="getBookById(selectedBook).author"
-                        :dueDate="null"
-                        :isAvailable="null"
-                        :returned="null"
-                    />
                 </div>
 
                 <div class="flex flex-col">
@@ -132,7 +140,6 @@ const handleEditSubmit = () => {
                     <label for="due_date">Ausgeliehen von Bibliothekar:</label>
                     <input v-model="form.librarian_id" type="text" name="librarian_id" id="librarian_id" required>
                 </div>
-                
 
                 <button type="submit" :disabled="form.processing" class="self-start bg-yellow-300 rounded-lg py-2 px-4">
                     Aktualisieren

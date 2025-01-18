@@ -17,9 +17,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User anlegen
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@admin.com',
+        Librarian::factory()->create([
+            'username' => 'Jodschi',
+            'firstname' => 'Johannes',
+            'lastname' => 'Reiter',
+            'email' => 'johannes.reiter@tfs-haslach.at',
             'password' => 'admin',
         ]);
 

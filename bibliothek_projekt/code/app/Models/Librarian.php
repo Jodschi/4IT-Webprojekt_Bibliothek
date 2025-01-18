@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Librarian extends Model
+class Librarian extends Authenticatable implements \Illuminate\Contracts\Auth\Authenticatable
 {
     /** @use HasFactory<\Database\Factories\LibrarianFactory> */
     use HasFactory;
@@ -16,6 +16,16 @@ class Librarian extends Model
         return $this->hasMany(Lending::class);
     }
 
+    protected $table = 'librarians'; // Tabellenname festlegen
+
+    protected $fillable = [
+        'username', // Name des Bibliothekars
+        'email', // E-Mail-Adresse des Bibliothekars
+        'firstname', // Vorname des Bibliothekars
+        'lastname', // Nachname des Bibliothekars
+        'password', // Passwort des Bibliothekars
+    ];
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -23,18 +33,15 @@ class Librarian extends Model
      */
     protected $hidden = [
         'password', // Passwort verstecken
+        'remember_token',
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'password' => 'hashed', // Passwörter verschlüsseln
-        ];
-    }
-
+    protected $casts = [
+        'password' => 'hashed', // Passwörter verschlüsseln
+    ];
 }

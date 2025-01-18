@@ -20,18 +20,18 @@ class AuthenticatedSessionController extends Controller
             'password' => 'required',
         ]);
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        if (!Auth::guard('librarian')->attempt($request->only('email', 'password'))) {
             return back()->withErrors([
                 'email' => 'Die angegebenen Anmeldedaten sind ungültig.',
             ]);
         }
-
+        
         return redirect()->route('books.index')->with('reload', true);
     }
 
     public function destroy()
     {
-        Auth::logout();
+        Auth::guard('librarian')->logout();
 
         request()->session()->invalidate();
         request()->session()->regenerateToken();

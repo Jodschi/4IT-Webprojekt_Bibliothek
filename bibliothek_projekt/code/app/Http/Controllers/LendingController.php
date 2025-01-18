@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Lending;
 use App\Models\Book;
+use App\Models\Librarian;
 use Inertia\Response;
 
 class LendingController extends Controller
@@ -25,19 +26,14 @@ class LendingController extends Controller
             ->paginate(10) // jeweils nur 10 Bücher auf einmal laden
             ->withQueryString(); // bei der Paginierung den Suchstring beibehalten
         
-        $lendings = Lending::all();
         $books = Book::all();
-
-        $items = $searchedLendings->items();
-        $firstItem = $items[0];
-        $attributes = $firstItem->getAttributes();
-        // dd($attributes);
-        
+        $librarians = Librarian::all();
         
         return Inertia::render('Lendings', [
             "searched_lendings" => $searchedLendings,
             "search_query" => $searchString,
             "books" => $books,
+            "librarians" => $librarians,
         ]);
     }
 
@@ -47,14 +43,13 @@ class LendingController extends Controller
         try {
             $attributes = $request->validate([
                 'book_id' => ['required', 'numeric'],
-                'librarian_id' => ['nullable', 'numeric'],
+                'librarian_id' => ['required', 'numeric'],
                 'borrower_name' => ['required', 'string'],
                 'borrow_date' => ['required', 'date'],
                 'due_date' => ['required', 'date'],
                 'returned' => ['nullable', 'boolean'],
             ]);
     
-            $attributes['librarian_id'] = $attributes['librarian_id'] ?? 1;
             $attributes['returned'] = $attributes['returned'] ?? false;
     
             Lending::create($attributes);
