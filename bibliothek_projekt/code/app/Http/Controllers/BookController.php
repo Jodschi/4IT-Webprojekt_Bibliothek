@@ -20,8 +20,9 @@ class BookController extends Controller
                     ->where('title', 'like', '%' . $searchString . '%') // nach Titel suchen
                     ->orWhere('description', 'like', '%' . $searchString . '%'); // alternativ auch nach Autor suchen
             })
+            ->with('lending') // Eager Loading: Ausleihen der Bücher mitladen
             ->orderBy('title', 'asc') // nach Titel aufsteigend sortieren
-            ->paginate(10) // jeweils nur 10 Bücher auf einmal laden
+            ->paginate(100) // 100 Bücher pro Seite
             ->withQueryString(); // bei der Paginierung den Suchstring beibehalten
 
 

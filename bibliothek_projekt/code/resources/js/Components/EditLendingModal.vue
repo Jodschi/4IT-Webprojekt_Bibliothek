@@ -4,7 +4,7 @@ import type { Book } from '@/Pages/Books.vue';
 import type { Librarian } from '@/Types/Librarian';
 import type { AuthProp } from '@/Types/Auth';
 import { ref, onMounted, watch } from 'vue';
-import { useForm, usePage } from '@inertiajs/vue3';
+import { router, useForm, usePage } from '@inertiajs/vue3';
 import { FwbModal } from 'flowbite-vue';
 import { FwbDropdown } from 'flowbite-vue';
 import BookSelection from '@/Components/BookSelection.vue';
@@ -72,6 +72,20 @@ const handleEditSubmit = () => {
     });
     
 };
+
+const completeLending = () => {
+    if (confirm('Hiermit bestätigen Sie, dass das Buch zurückgegeben wurde. Möchten Sie fortfahren?')) {
+        router.delete(`/ausleihen/${props.lending.id}`, {
+            onSuccess: () => {
+                emit('onSuccessfulPatch');
+            },
+            onError: (error) => {
+                console.error('Error completing lending:', error);
+            },
+            preserveScroll: true,
+        });
+    }
+}
 
 </script>
 
@@ -141,37 +155,44 @@ const handleEditSubmit = () => {
                 </div>
 
                 <div class="flex flex-col">
-                            <label class="mb-2" for="book_id">Ausgeliehen von Bibliothekar: </label>
-                            <fwb-dropdown placement="top" text="Buch auswählen" close-inside>
-                                <template #trigger>
-                                    <LibrarianSelection
-                                        class="bg-yellow-100/50 rounded-lg py-2 px-5 select-none"
-                                        :librarian="getLibrarianById(selectedLibrarian)"
-                                    />
-                                </template>
+                    <label class="mb-2" for="book_id">Ausgeliehen von Bibliothekar: </label>
+                    <fwb-dropdown placement="top" text="Buch auswählen" close-inside>
+                        <template #trigger>
+                            <LibrarianSelection
+                                class="bg-yellow-100/50 rounded-lg py-2 px-5 select-none"
+                                :librarian="getLibrarianById(selectedLibrarian)"
+                            />
+                        </template>
 
-                                <template #default>
-                                    <div class="bg-gray-100 flex flex-col p-2 space-y-2 rounded-sm overflow-y-auto h-72 w-96">
-                                        <LibrarianSelection
-                                            v-for="librarian in librarians"
-                                            @on-select="handleLibrarianSelection"
-                                            class="rounded-lg py-2 w-full"
-                                            :class="{
-                                                'bg-yellow-400/10 pointer-events-none': selectedLibrarian === librarian.id,
-                                                'bg-gray-200': selectedLibrarian !== librarian.id
-                                            }"
-                                            :librarian="librarian"
-                                        />
-                                        
-                                    </div>
-                                </template>
+                        <template #default>
+                            <div class="bg-gray-100 flex flex-col p-2 space-y-2 rounded-sm overflow-y-auto h-72 w-96">
+                                <LibrarianSelection
+                                    v-for="librarian in librarians"
+                                    @on-select="handleLibrarianSelection"
+                                    class="rounded-lg py-2 w-full"
+                                    :class="{
+                                        'bg-yellow-400/10 pointer-events-none': selectedLibrarian === librarian.id,
+                                        'bg-gray-200': selectedLibrarian !== librarian.id
+                                    }"
+                                    :librarian="librarian"
+                                />
+                                
+                            </div>
+                        </template>
 
-                            </fwb-dropdown>
-                        </div>
+                    </fwb-dropdown>
+                </div>
 
-                <button type="submit" :disabled="form.processing" class="self-start bg-yellow-300 rounded-lg py-2 px-4">
-                    Aktualisieren
-                </button>
+
+                <div class="flex justify-between pt-6">
+                    <button type="submit" :disabled="form.processing" class="self-start bg-yellow-300 rounded-lg py-2 px-4">
+                        Aktualisieren
+                    </button>
+                    
+                    <button type="submit" @click.prevent="completeLending" :disabled="form.processing" class="bg-lime-300 rounded-lg py-2 px-4">
+                        Ausleihe abschließen (Buch zurückgegeben)
+                    </button>
+                </div>
             </form>
         </template>
 

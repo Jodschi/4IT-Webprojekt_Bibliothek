@@ -29,14 +29,13 @@ class DatabaseSeeder extends Seeder
         Librarian::factory()->count(4)->create();
         Book::factory()->count(20)->create();
         
-        // Testausleihe
+        // Testausleihe 
         Lending::factory()->create([
             'book_id' => 1,
             'librarian_id' => 1,
             'borrower_name' => fake()->name(),
             'borrow_date' => '2024-12-06',
             'due_date' => '2024-12-20',
-            'returned' => false,
         ]);
 
         Lending::factory()->create([
@@ -45,7 +44,6 @@ class DatabaseSeeder extends Seeder
             'borrower_name' => fake()->name(),
             'borrow_date' => '2024-12-02',
             'due_date' => '2024-12-25',
-            'returned' => false,
         ]);
     }
 }

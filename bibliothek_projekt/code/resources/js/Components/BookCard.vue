@@ -7,7 +7,6 @@ import type { AuthProp } from '@/Types/Auth';
 
 const props = defineProps<{
     book: Book;
-    availabe: boolean;
 }>();
 
 const user = ref((usePage().props.auth as AuthProp).user);
@@ -29,47 +28,21 @@ const handleDelete = () => {
     emit('onDelete', props.book.id);
 }
 
-const isOverdue = ref<boolean>(true);
+const available = ref<boolean>();
 
-const getTodayDateFormatted = (): string => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-
-    return `${year}.${month}.${day}`;
-}
-
-const checkIfOverdue = (todayDateString:string, dueDateString:string): boolean => {
-    const todayDate = new Date(todayDateString);
-    const dueDate = new Date(dueDateString);
-    
-    // Wenn das heutige Datum größer ist wie das Rückgabedatum, ist das Buch überfällig
-    if (dueDate < todayDate) {
-        // console.log("isOverdue:", isOverdue.value, todayDate, dueDate);
-        return true;
+const checkIfAvailable = () => {
+    if (props.book.lending && !props.book.lending.returned) {
+        available.value = false;
     } else {
-        // console.log("isOverdue:", isOverdue.value, todayDate, dueDate);
-        return false;
+        available.value = true;
     }
-
 }
 
-// onMounted(() => {
-//     if(props.dueDate) {
-//         const currentDate: string = getTodayDateFormatted();
-    
-//         if (checkIfOverdue(currentDate, props.dueDate) && !props.returned) {
-//             isOverdue.value = true;
-//         } else {
-//             isOverdue.value = false;
-//         }
-//     }
-// });
-
-watch(isOverdue, () => {
-    // console.log("isOverdue:", isOverdue.value);
+onMounted(() => {
+    checkIfAvailable();
 });
+
+
 
 </script>
 
@@ -103,8 +76,8 @@ watch(isOverdue, () => {
 
     <div class="mr-8 flex flex-col justify-between items-end">
         <div class="">
-            <span v-if="availabe" class="text-green-500 font-semibold">Verfügbar</span>
-            <span v-if="!availabe" class="text-red-500 font-semibold">Ausgeliehen</span>
+            <span v-if="available" class="text-green-500 font-semibold">Verfügbar</span>
+            <span v-if="!available" class="text-red-500 font-semibold">Ausgeliehen</span>
         </div>
     </div>
 </div>
@@ -138,9 +111,9 @@ watch(isOverdue, () => {
 
     <div class="mr-8 flex flex-col justify-between items-end">
         <div class="">
-            <span v-if="availabe" class="text-green-500 font-semibold">Verfügbar</span>
+            <span v-if="available" class="text-green-500 font-semibold">Verfügbar</span>
             
-            <span v-if="!availabe" class="text-red-500 font-semibold">Ausgeliehen</span>
+            <span v-if="!available" class="text-red-500 font-semibold">Ausgeliehen</span>
         </div>
 
         <div class="flex space-x-5">

@@ -8,7 +8,6 @@ const props = defineProps<{
     borrowDate: string;
     dueDate: string;
     returned: boolean;
-    isAvailable: boolean;
     book: Book | null;
     librarianName: string;
 }>();
@@ -23,7 +22,7 @@ const handleDelete = () => {
     emit('onDelete', props.id);
 }
 
-const isOverdue = ref<boolean>(true);
+const isOverdue = ref<boolean>();
 
 const getTodayDateFormatted = (): string => {
     const today = new Date();
@@ -40,10 +39,10 @@ const checkIfOverdue = (todayDateString:string, dueDateString:string): boolean =
     
     // Wenn das heutige Datum größer ist wie das Rückgabedatum, ist das Buch überfällig
     if (dueDate < todayDate) {
-        // console.log("isOverdue:", isOverdue.value, todayDate, dueDate);
+        console.log("isOverdue:", isOverdue.value, todayDate, dueDate);
         return true;
     } else {
-        // console.log("isOverdue:", isOverdue.value, todayDate, dueDate);
+        console.log("isOverdue:", isOverdue.value, todayDate, dueDate);
         return false;
     }
 }
@@ -51,7 +50,7 @@ const checkIfOverdue = (todayDateString:string, dueDateString:string): boolean =
 onMounted(() => {
     const currentDate: string = getTodayDateFormatted();
 
-    if (checkIfOverdue(currentDate, props.dueDate) && !props.returned) {
+    if (checkIfOverdue(currentDate, props.dueDate)) {
         isOverdue.value = true;
     } else {
         isOverdue.value = false;
@@ -59,7 +58,7 @@ onMounted(() => {
 });
 
 watch(isOverdue, () => {
-    // console.log("isOverdue:", isOverdue.value);
+    console.log("isOverdue:", isOverdue.value);
 });
 
 
@@ -84,7 +83,8 @@ watch(isOverdue, () => {
         
         <div class="mr-8 flex flex-col">
             <span v-if="!isOverdue">ausgeliehen bis: {{ dueDate }}</span>
-            <span v-if="isOverdue" class="text-red-600">Überfällig - Rückgabedatum am {{ dueDate }}</span>
+            <span v-if="isOverdue && !returned" class="text-red-600">Überfällig - Rückgabedatum am {{ dueDate }}</span>
+            <span v-if="returned" class="text-green-600">Zurückgegeben (Verfügbar)</span>
         </div>
     </div>
     

@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('borrower_name'); // Name der Person, die das Buch ausleiht
             $table->date('borrow_date'); // Datum, an dem das Buch ausgeliehen wird
             $table->date('due_date'); // Datum, bis zu welchem das Buch zurückgegeben werden muss
-            $table->boolean('returned')->default(false); // Wahrheitswert, um festzuhalten, ob das Buch schon zurückgegeben wurde
 
             $table->timestamps();
         });

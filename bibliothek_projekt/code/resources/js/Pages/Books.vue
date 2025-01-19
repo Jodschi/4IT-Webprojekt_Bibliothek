@@ -9,6 +9,7 @@ import { computed, onMounted, ref, watch, watchEffect } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
 import type { AuthProp } from '@/Types/Auth';
+import type { Lending } from './Lendings.vue';
 
 export interface Book {
     id: number;
@@ -21,6 +22,7 @@ export interface Book {
     publisher: string;
     created_at: string;
     updated_at: string;
+    lending: Lending|null;
 }
 
 interface SearchedBooks {
@@ -162,9 +164,6 @@ const onSuccessfulPatch = () => {
             <div id="book_output_container" class="space-y-4 mt-6">
                 <BookCard v-for="book in searchedBooks.data" :key="book.id"
                     :book="book"
-                    :availabe="true"
-                    :due-date="undefined"
-                    :returned="true"
                     @on-edit="openEditModal"
                     @on-delete="handleBookDeletion"
                 />

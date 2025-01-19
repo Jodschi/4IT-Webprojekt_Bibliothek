@@ -326,7 +326,6 @@ const onSuccessfulPatch = () => {
                     :book="getBookById(lending.book_id)"
                     :dueDate="lending.due_date"
                     :returned="Boolean(lending.returned)"
-                    :isAvailable="true"
                     :librarianName="getLibrarianById(lending.librarian_id).username"
                     @on-edit="openEditModal"
                     @on-delete="handleLendingDeletion"
