@@ -10,6 +10,7 @@ const props = defineProps<{
     returned: boolean;
     isAvailable: boolean;
     book: Book | null;
+    librarianName: string;
 }>();
 
 const emit = defineEmits(['onEdit', 'onDelete']);
@@ -69,37 +70,38 @@ watch(isOverdue, () => {
 
 <template>
 
-<div class="h-32 rounded-md bg-gradient-to-r from-yellow-100 to-yellow-200 justify-between flex flex-col p-5">
+<div class="h-36 rounded-xl shadow-xl bg-gradient-to-r from-yellow-100 to-yellow-200 justify-between flex flex-col p-5">
     
     <div class="flex ml-8 justify-between">
         <div class="">
             <div class="flex flex-col">
-                <span v-html="book?.title" class="font-semibold"></span>
-                <div>
-                    <span class="text-black/60">Ausgeliehen von: </span>
-                    <span v-html="borrowerName" class="text-black/60"></span>
-                </div>
+                <span v-html="book?.title" class="font-semibold text-lg"></span>
+                <span class="text-black/60">Ausgeliehen von: {{ borrowerName }}</span>
+                <span class="text-black/60">Von Bibliothekar: {{ librarianName }}</span>
             </div>
             
         </div>
         
-        <div class="mr-8 ">
+        <div class="mr-8 flex flex-col">
             <span v-if="!isOverdue">ausgeliehen bis: {{ dueDate }}</span>
-            
             <span v-if="isOverdue" class="text-red-600">Überfällig - Rückgabedatum am {{ dueDate }}</span>
         </div>
     </div>
     
 
-    <div class="ml-8 flex space-x-5 font-semibold">
+    <div class="mr-8 mb-6 flex space-x-5 font-semibold justify-end">
         <div>
-            <button @click="handleEdit" 
-                class="text-blue-500">Bearbeiten</button>
+            <button 
+                @click="handleEdit" 
+                class="text-blue-700 bg-blue-200 p-1 rounded-lg border-blue-200 border-2 shadow-lg">Bearbeiten
+            </button>
         </div>
 
         <div>
-            <button @click="handleDelete" 
-                class="text-red-500">Löschen</button>
+            <button 
+                @click="handleDelete" 
+                class="text-red-950 bg-red-700 p-1 rounded-lg border-red-700 border-2 shadow-lg">Löschen
+            </button>
         </div>
     </div>
 

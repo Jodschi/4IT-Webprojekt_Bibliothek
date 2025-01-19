@@ -14,5 +14,7 @@ class Book extends Model
     public function lending(): BelongsTo {
         return $this->belongsTo(Lending::class);
     }
+
+    protected $guarded = [];
 }
 

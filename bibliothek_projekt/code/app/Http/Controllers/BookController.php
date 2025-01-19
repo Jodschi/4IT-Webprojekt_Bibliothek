@@ -44,24 +44,38 @@ class BookController extends Controller
         ]);
 
         $book = Book::create($attributes);
-        return response()->json($book, 201);
+        return redirect()->back();
     }
 
     public function update(Request $request, $id) {
-        $validatedData = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
-            'description' => 'sometimes|required|string',
-            // Add other fields validation as needed
-        ]);
-
-        $book = Book::findOrFail($id);
-        $book->update($validatedData);
-        return response()->json($book);
+        try {
+            $attributes = $request->validate([
+                'isbn' => 'required|numeric',
+                'title' => 'required|string|max:255',
+                'description' => 'required|string',
+                'publisher' => 'required|string',
+                'price' => 'required|numeric',
+                'author' => 'required|string',
+                'category' => 'required|string',
+            ]);
+    
+            $book = Book::findOrFail($id);
+            $book->update($attributes);
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            dd($th);
+        }
     }
 
+
     public function destroy($id) {
-        $book = Book::findOrFail($id);
-        $book->delete();
-        return response()->json(null, 204);
+        try {
+            $book = Book::findOrFail($id);
+            $book->delete();
+
+            return redirect('/')->with("status", "success");
+        } catch (\Throwable $th) {
+            dd($th);
+        }
     }
 }

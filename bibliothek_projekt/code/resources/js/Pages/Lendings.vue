@@ -151,7 +151,8 @@ const handleLendingDeletion = (id: number) => {
             },
             onError: (error) => {
                 console.error('Error deleting lending:', error);
-            }
+            },
+            preserveScroll: true,
         });
     }
 };
@@ -317,7 +318,7 @@ const onSuccessfulPatch = () => {
                 v-on:on-successful-patch="onSuccessfulPatch"
             />
 
-            <div id="lending_output_container" class="space-y-4 mt-6">
+            <div id="lending_output_container" class="space-y-4 mt-6 max-w-4xl">
                 <LendingCard v-for="lending in searchedLendings.data"
                     :id="lending.id"
                     :borrowerName="lending.borrower_name"
@@ -326,6 +327,7 @@ const onSuccessfulPatch = () => {
                     :dueDate="lending.due_date"
                     :returned="Boolean(lending.returned)"
                     :isAvailable="true"
+                    :librarianName="getLibrarianById(lending.librarian_id).username"
                     @on-edit="openEditModal"
                     @on-delete="handleLendingDeletion"
                 />

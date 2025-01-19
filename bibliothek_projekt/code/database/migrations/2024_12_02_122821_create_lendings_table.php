@@ -15,7 +15,9 @@ return new class extends Migration
     {
         Schema::create('lendings', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Book::class); // Fremdschlüssel für das Buch, das ausgeliehen wird
+            $table->foreignIdFor(Book::class) // Fremdschlüssel für das Buch, das ausgeliehen wird
+                ->constrained()
+                ->onDelete('cascade'); // Wenn das Buch gelöscht wird, soll die Ausleihe auch gelöscht werden
             $table->foreignIdFor(Librarian::class); // Fremdschlüssel für den Bibliothekar, der das Buch ausleiht
 
             $table->string('borrower_name'); // Name der Person, die das Buch ausleiht

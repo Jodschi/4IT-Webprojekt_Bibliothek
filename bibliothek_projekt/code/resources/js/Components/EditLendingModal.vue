@@ -8,6 +8,7 @@ import { useForm, usePage } from '@inertiajs/vue3';
 import { FwbModal } from 'flowbite-vue';
 import { FwbDropdown } from 'flowbite-vue';
 import BookSelection from '@/Components/BookSelection.vue';
+import LibrarianSelection from './LibrarianSelection.vue';
 
 const props = defineProps<{
     books: Book[];
@@ -20,11 +21,8 @@ const props = defineProps<{
 // pageProps Objekt
 const pageProps = ref(usePage().props);
 
-const user = ref((usePage().props.auth as AuthProp).user);
-const activeLibrarian = user.value as Librarian;
-
 const selectedBook = ref<number>(props.lending.book_id);
-const selectedLibrarian = ref<number>(activeLibrarian.id); // Standardmäßig den angemeldeten Bibliothekar auswählen
+const selectedLibrarian = ref<number>(props.lending.librarian_id);
 
 const emit = defineEmits(['onSuccessfulPatch']);
 
@@ -42,6 +40,11 @@ const form = useForm({
 const getBookById = (id: number): Book => {
     const filteredBook = props.books.find(item => item.id === id) as Book;
     return filteredBook;
+}
+
+const getLibrarianById = (id: number): Librarian => {
+    const filteredLibrarian = props.librarians.find(item => item.id === id) as Librarian;
+    return filteredLibrarian;
 }
 
 
@@ -64,7 +67,8 @@ const handleEditSubmit = () => {
         },
         onError: (error) => {
             console.error('Error deleting lending:', error);
-        }
+        },
+        preserveScroll: true,
     });
     
 };
@@ -137,9 +141,33 @@ const handleEditSubmit = () => {
                 </div>
 
                 <div class="flex flex-col">
-                    <label for="due_date">Ausgeliehen von Bibliothekar:</label>
-                    <input v-model="form.librarian_id" type="text" name="librarian_id" id="librarian_id" required>
-                </div>
+                            <label class="mb-2" for="book_id">Ausgeliehen von Bibliothekar: </label>
+                            <fwb-dropdown placement="top" text="Buch auswählen" close-inside>
+                                <template #trigger>
+                                    <LibrarianSelection
+                                        class="bg-yellow-100/50 rounded-lg py-2 px-5 select-none"
+                                        :librarian="getLibrarianById(selectedLibrarian)"
+                                    />
+                                </template>
+
+                                <template #default>
+                                    <div class="bg-gray-100 flex flex-col p-2 space-y-2 rounded-sm overflow-y-auto h-72 w-96">
+                                        <LibrarianSelection
+                                            v-for="librarian in librarians"
+                                            @on-select="handleLibrarianSelection"
+                                            class="rounded-lg py-2 w-full"
+                                            :class="{
+                                                'bg-yellow-400/10 pointer-events-none': selectedLibrarian === librarian.id,
+                                                'bg-gray-200': selectedLibrarian !== librarian.id
+                                            }"
+                                            :librarian="librarian"
+                                        />
+                                        
+                                    </div>
+                                </template>
+
+                            </fwb-dropdown>
+                        </div>
 
                 <button type="submit" :disabled="form.processing" class="self-start bg-yellow-300 rounded-lg py-2 px-4">
                     Aktualisieren
