@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthenticatedSessionController;
 
 Route::get('/', [BookController::class, 'index'])->name('books.index');
 
+// Loginseite nur für nicht angemeldete Benutzer zugänglich
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
@@ -17,6 +18,7 @@ Route::middleware(['guest'])->group(function () {
 Route::middleware(['auth:librarian'])->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
     
+    // Buch-Controller für die Bibliothekare
     Route::controller(BookController::class)->group(function () {
         Route::get('/buecher/erstellen', 'create')->name('books.create');
         Route::post('/buecher', 'store')->name('books.store');
@@ -26,6 +28,7 @@ Route::middleware(['auth:librarian'])->group(function () {
         Route::delete('/buecher/{id}', 'destroy')->name('books.destroy');
     });
 
+    // Ausleihe-Controller für die Bibliothekare
     Route::controller(LendingController::class)->group(function () {
         Route::get('/ausleihen', 'index')->name('lendings.index');
         Route::post('/ausleihen', 'store')->name('lendings.store');
