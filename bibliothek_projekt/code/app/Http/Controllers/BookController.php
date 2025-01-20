@@ -18,7 +18,7 @@ class BookController extends Controller
             ->when($searchString, function ($query, $searchString) {
                 $query
                     ->where('title', 'like', '%' . $searchString . '%') // nach Titel suchen
-                    ->orWhere('description', 'like', '%' . $searchString . '%'); // alternativ auch nach Autor suchen
+                    ->orWhere('category', 'like', '%' . $searchString . '%'); // alternativ auch nach Autor suchen
             })
             ->with('lending') // Eager Loading: Ausleihen der Bücher mitladen
             ->orderBy('title', 'asc') // nach Titel aufsteigend sortieren
